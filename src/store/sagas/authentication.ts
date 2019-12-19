@@ -49,7 +49,7 @@ function* logoutRequestHandler() {
   }
 }
 
-function* authentication() {
+function* authenticationSaga() {
   yield all([
     call(watchForAuthReady),
     call(watchForUserLoginStatus),
@@ -57,4 +57,4 @@ function* authentication() {
   ])
 }
 
-export default authentication;
+export default authenticationSaga;

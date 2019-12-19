@@ -1,6 +1,6 @@
 import {
   AuthState,
-  AuthActionTypes,
+  ActionTypes,
   AUTH_READY,
   LOGIN_SUCCESS,
   LOGOUT_SUCCESS,
@@ -11,7 +11,7 @@ const defaultState: AuthState = {
   ready: false,
 };
 
-function auth(state = defaultState, action: AuthActionTypes): AuthState {
+function auth(state = defaultState, action: ActionTypes): AuthState {
   switch (action.type) {
     case AUTH_READY:
       return {
