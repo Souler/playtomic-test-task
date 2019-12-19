@@ -11,7 +11,6 @@ function PrivateRoute(props: RouteProps) {
     <Route
       {...otherProps}
       render={({ location }) =>
-        // FIXME: Use state
         loggedIn
           ? children
           : (

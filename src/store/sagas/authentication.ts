@@ -16,8 +16,7 @@ function authStateEventChannel() {
     const unsub = firebase.auth().onAuthStateChanged(user => {
       const { email, emailVerified } = user || {};
       if (email && emailVerified) {
-        // FIXME: Dont use this!
-        emitter({ user: firebaseUserToUser(user as any) });
+        emitter({ user: firebaseUserToUser(user!) });
       } else {
         emitter({ user: null });
       }
