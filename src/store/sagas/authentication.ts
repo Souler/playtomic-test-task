@@ -1,5 +1,5 @@
 import { eventChannel } from 'redux-saga';
-import { all, call, put, take } from 'redux-saga/effects';
+import { all, call, fork, put, take } from 'redux-saga/effects';
 import firebase from '../../lib/firebase';
 import { loginSuccess, logoutSuccess, authReady } from '../actions';
 import { LOGOUT_REQUEST, User } from '../types';
@@ -26,13 +26,13 @@ function authStateEventChannel() {
 }
 
 function* watchForAuthReady() {
-  const authState = authStateEventChannel();
+  const authState = yield call(authStateEventChannel);
   yield take(authState);
   yield put(authReady());
 }
 
 function* watchForUserLoginStatus() {
-  const authState = authStateEventChannel();
+  const authState = yield call(authStateEventChannel);
   while (true) {
     // FIXME: TypeScript swallows the typing after the yield, why?
     const { user } = yield take(authState);
@@ -50,9 +50,9 @@ function* logoutRequestHandler() {
 
 function* authenticationSaga() {
   yield all([
-    call(watchForAuthReady),
-    call(watchForUserLoginStatus),
-    call(logoutRequestHandler),
+    fork(watchForAuthReady),
+    fork(watchForUserLoginStatus),
+    fork(logoutRequestHandler),
   ])
 }
 

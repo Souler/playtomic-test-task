@@ -47,14 +47,14 @@ function fetchSecretStringRequest(): ActionTypes {
 function fetchSecretStringSuccess(secretString: string): ActionTypes {
   return {
     type: FETCH_SECRET_STRING_SUCCESS,
-    payload: { secretString }
+    payload: { secretString },
   };
 }
 
 function fetchSecretStringError(error: Error): ActionTypes {
   return {
     type: FETCH_SECRET_STRING_ERROR,
-    payload: { error }
+    payload: { error },
   };
 }
 
@@ -67,14 +67,14 @@ function fetchRandomStringRequest(): ActionTypes {
 function fetchRandomStringSuccess(randomString: string): ActionTypes {
   return {
     type: FETCH_RANDOM_STRING_SUCCESS,
-    payload: { randomString }
+    payload: { randomString },
   };
 }
 
 function fetchRandomStringError(error: Error): ActionTypes {
   return {
     type: FETCH_RANDOM_STRING_ERROR,
-    payload: { error }
+    payload: { error },
   };
 }
 
