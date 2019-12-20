@@ -11,7 +11,7 @@ import DashboardLayout from './DashboardLayout';
 import LoginLayout from './LoginLayout';
 import PrivateRoute from './PrivateRoute';
 
-function Dashboard() {
+function AppRouter() {
   return (
     <Router>
       <Switch>
@@ -38,4 +38,4 @@ function Dashboard() {
   )
 }
 
-export default Dashboard;
+export default AppRouter;
