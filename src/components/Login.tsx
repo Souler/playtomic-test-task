@@ -4,7 +4,7 @@ import { useLocation } from 'react-router';
 import { Redirect } from 'react-router-dom';
 import StyledFirebaseAuth from 'react-firebaseui/StyledFirebaseAuth';
 import firebase from '../lib/firebase';
-import { isLoggedIn, isAuthReady } from '../store/selectors';
+import { isLoggedIn } from '../store/selectors';
 
 const uiConfig = {
   // Popup signin flow rather than redirect flow.
@@ -22,18 +22,15 @@ const uiConfig = {
 
 function Login() {
   const location = useLocation();
-  const authReady = useSelector(isAuthReady);
   const loggedIn = useSelector(isLoggedIn);
   const { from } = location.state || { from: { pathname: "/" } };
 
   return (
     <React.Fragment>
       {
-        authReady
-          ? loggedIn
-            ? <Redirect to={from} />
-            : <StyledFirebaseAuth uiConfig={uiConfig} firebaseAuth={firebase.auth()} />
-          : null
+        loggedIn
+          ? <Redirect to={from} />
+          : <StyledFirebaseAuth uiConfig={uiConfig} firebaseAuth={firebase.auth()} />
       }
     </React.Fragment>
   );

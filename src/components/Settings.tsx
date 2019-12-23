@@ -2,19 +2,25 @@ import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { getSecretString } from '../store/selectors';
 import { fetchSecretStringRequest } from '../store/actions';
+import DashboardContent from './DashboardContent';
+
+function useSecretString() {
+  const secretString = useSelector(getSecretString);
+  const dispatch = useDispatch();
+  useEffect(
+    () => { dispatch(fetchSecretStringRequest()) },
+    [dispatch],
+  );
+  return secretString;
+}
 
 function Settings() {
-  const randomString = useSelector(getSecretString);
-  const dispatch = useDispatch();
-  useEffect(() => {
-    dispatch(fetchSecretStringRequest());
-  }, [dispatch]);
+  const secretString = useSecretString();
 
   return (
-    <React.Fragment>
-      <div>Settings</div>
-      <code>{randomString}</code>
-    </React.Fragment>
+    <DashboardContent title="Settings">
+      <code>{secretString}</code>
+    </DashboardContent>
   );
 }
 

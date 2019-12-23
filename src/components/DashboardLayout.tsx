@@ -9,13 +9,16 @@ const ContentWrapper = styled.section`
   flex-direction: row;
 `;
 const SidebarWrapper = styled.section`
+  display: flex;
   flex: 0;
   max-width: 400px;
-  margin: 20px;
+  padding-top: 64px;
 `;
 const ChildrenWrapper = styled.section`
+  display: flex;
   flex: 1;
-  margin: 20px;
+  padding: 32px;
+  padding-bottom: 0;
 `;
 
 function DashboardLayout(props: PropsWithChildren<{}>) {
