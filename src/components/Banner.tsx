@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import styled from 'styled-components';
 import { useDispatch, useSelector } from 'react-redux';
 import { logoutRequest } from '../store/actions';
@@ -36,11 +36,15 @@ const Role = styled.span`
 function Banner() {
   const user = useSelector(getUserSafe);
   const dispatch = useDispatch();
+  const logout = useCallback(
+    () => dispatch(logoutRequest()),
+    [dispatch],
+  );
 
   return (
     <Wrapper>
       <Logo>Task dashboard</Logo>
-      <UserInfoWrapper onDoubleClick={() => dispatch(logoutRequest())}>
+      <UserInfoWrapper onDoubleClick={logout}>
         <ProfilePic src={user.avatarUrl} alt={`${user.displayName} profile pic`} />
         <DisplayName>{user.displayName}</DisplayName>
         <Role>{user.role}</Role>
