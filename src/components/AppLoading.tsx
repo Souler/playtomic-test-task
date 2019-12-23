@@ -1,12 +1,12 @@
-import React from 'react';
-import styled from 'styled-components';
+import React from 'react'
+import styled from 'styled-components'
 
 const Container = styled.section`
   display: flex;
   flex: 1;
   align-items: center;
   justify-content: center;
-`;
+`
 
 function LoginLayout() {
   return (
@@ -16,4 +16,4 @@ function LoginLayout() {
   )
 }
 
-export default LoginLayout;
+export default LoginLayout

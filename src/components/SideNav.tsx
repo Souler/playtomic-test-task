@@ -1,12 +1,12 @@
-import React, { CSSProperties } from 'react';
-import { NavLink } from 'react-router-dom';
-import styled from 'styled-components';
+import React, { CSSProperties } from 'react'
+import { NavLink } from 'react-router-dom'
+import styled from 'styled-components'
 
 const Container = styled.div`
   display: flex;
   flex: 1;
   flex-direction: column;
-`;
+`
 const LinkContent = styled.div`
   display: flex;
   padding: 8px 32px;
@@ -18,7 +18,7 @@ const IconPlaceholder = styled.div`
   border-radius: 100%;
   background-color: rgba(0, 0, 0, 0.38);
   margin: 8px;
-`;
+`
 const LinkText = styled.span`
   margin: 8px;
   color: rgba(0, 0, 0, 0.54);
@@ -27,7 +27,7 @@ const LinkText = styled.span`
 
 const activeStyle: CSSProperties = {
   backgroundColor: '#fef9ea',
-};
+}
 
 function SideNav() {
   return (
@@ -45,7 +45,7 @@ function SideNav() {
         </LinkContent>
       </NavLink>
     </Container>
-  );
+  )
 }
 
-export default SideNav;
+export default SideNav

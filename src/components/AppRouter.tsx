@@ -1,39 +1,34 @@
-import React from 'react';
-import { useSelector } from 'react-redux';
-import {
-  BrowserRouter as Router,
-  Route,
-  Switch,
-  Redirect,
-} from 'react-router-dom';
-import { isAuthReady } from '../store/selectors';
-import AppLoading from './AppLoading';
-import DashboardLayout from './DashboardLayout';
-import LoginLayout from './LoginLayout';
-import PrivateRoute from './PrivateRoute';
-import Profile from './Profile';
-import Settings from './Settings';
+import React from 'react'
+import { useSelector } from 'react-redux'
+import { BrowserRouter as Router, Redirect, Route, Switch } from 'react-router-dom'
+import { isAuthReady } from '../store/selectors'
+import AppLoading from './AppLoading'
+import DashboardLayout from './DashboardLayout'
+import LoginLayout from './LoginLayout'
+import PrivateRoute from './PrivateRoute'
+import Profile from './Profile'
+import Settings from './Settings'
 
 function AppRouter() {
-  const authReady = useSelector(isAuthReady);
+  const authReady = useSelector(isAuthReady)
 
   if (!authReady) {
-    return <AppLoading />;
+    return <AppLoading />
   }
 
   return (
     <Router>
       <Switch>
-        <Route exact path="/login">
+        <Route exact={true} path="/login">
           <LoginLayout />
         </Route>
         <Route path="*">
           <DashboardLayout>
             <Switch>
-              <PrivateRoute exact path="/dashboard">
+              <PrivateRoute exact={true} path="/dashboard">
                 <Profile />
               </PrivateRoute>
-              <PrivateRoute exact path="/settings">
+              <PrivateRoute exact={true} path="/settings">
                 <Settings />
               </PrivateRoute>
               <Route path="*">
@@ -47,4 +42,4 @@ function AppRouter() {
   )
 }
 
-export default AppRouter;
+export default AppRouter

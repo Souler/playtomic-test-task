@@ -1,6 +1,6 @@
-import React from 'react';
-import styled from 'styled-components';
-import Login from './Login';
+import React from 'react'
+import styled from 'styled-components'
+import Login from './Login'
 
 const Container = styled.section`
   display: flex;
@@ -9,7 +9,7 @@ const Container = styled.section`
   justify-content: center;
   background: #fff9e3;
   background: linear-gradient(180deg, #fff9e3 0%, #ffffff 100%);
-`;
+`
 
 function LoginLayout() {
   return (
@@ -19,4 +19,4 @@ function LoginLayout() {
   )
 }
 
-export default LoginLayout;
+export default LoginLayout
