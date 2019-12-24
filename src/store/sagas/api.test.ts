@@ -95,7 +95,5 @@ describe('handleFetchApiResourceRequest', () => {
 })
 
 describe('api saga', () => {
-  test.skip('forks to other sagas', () => {
-    return expectSaga(api).all([takeEvery('A', handleFetchApiResourceRequest)])
-  })
+  test.todo('forks to other sagas')
 })

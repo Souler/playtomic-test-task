@@ -34,4 +34,4 @@ test('shows the authenticated user avatar', () => {
   expect(el.getAttribute('src')).toBe(user.avatarUrl)
 })
 
-test.skip('dispatches logout action when double-clicks on the user info')
+test.todo('dispatches logout action when double-clicks on the user info')
