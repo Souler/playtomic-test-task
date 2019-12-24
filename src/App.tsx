@@ -1,14 +1,15 @@
 import React from 'react'
 import { Provider } from 'react-redux'
-import Router from './components/AppRouter'
+import { BrowserRouter } from 'react-router-dom'
+import AppRoot from './components/AppRoot'
 import configureStore from './store/configureStore'
 
-const store = configureStore()
-
-function App() {
+function App({ store = configureStore() }) {
   return (
     <Provider store={store}>
-      <Router />
+      <BrowserRouter>
+        <AppRoot />
+      </BrowserRouter>
     </Provider>
   )
 }

@@ -22,7 +22,8 @@ const Title = styled.div`
   font-weight: bold;
 `
 const Content = styled.div`
-  display: flex;
+  display: block;
+  flex-direction: column;
   flex: 1;
   padding: 24px 50px;
 `

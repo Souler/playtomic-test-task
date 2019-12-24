@@ -1,24 +1,14 @@
-import React, { useEffect } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
-import { fetchRandomStringRequest } from '../store/actions'
-import { getRandomString } from '../store/selectors'
+import React from 'react'
+import useContacts from '../hooks/useContacts'
 import DashboardContent from './DashboardContent'
-
-function useRandomString() {
-  const randomString = useSelector(getRandomString)
-  const dispatch = useDispatch()
-  useEffect(() => {
-    dispatch(fetchRandomStringRequest())
-  }, [dispatch])
-  return randomString
-}
+import JSONTreeView from './JSONTreeView'
 
 function Profile() {
-  const randomString = useRandomString()
+  const [loading, contacts, error] = useContacts()
 
   return (
     <DashboardContent title="Secret dashboard">
-      <code>{randomString}</code>
+      <JSONTreeView data={{ loading, error, contacts }} />
     </DashboardContent>
   )
 }

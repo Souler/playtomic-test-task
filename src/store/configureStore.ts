@@ -1,12 +1,12 @@
-import { applyMiddleware, compose, createStore } from 'redux'
+import { applyMiddleware, compose, createStore, DeepPartial } from 'redux'
 import createSagaMiddleware from 'redux-saga'
-import rootReducer from './rootReducer'
+import rootReducer, { RootState } from './rootReducer'
 import rootSaga from './rootSaga'
 
 const composeEnhancers =
   (typeof window !== 'undefined' && (window as any).__REDUX_DEVTOOLS_EXTENSION_COMPOSE__) || compose
 
-function configureStore(preloadedState = {}) {
+function configureStore(preloadedState: DeepPartial<RootState> = {}) {
   const sagaMiddleware = createSagaMiddleware()
 
   const middlewares = [sagaMiddleware]

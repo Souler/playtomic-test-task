@@ -11,12 +11,10 @@ const uiConfig = {
     // Avoid redirects after sign-in.
     signInSuccessWithAuthResult: (...args: any[]) => false,
   },
-  // Popup signin flow rather than redirect flow.
   signInFlow: 'popup',
-  // We will display Google and Facebook as auth providers.
   signInOptions: [
+    firebase.auth.GithubAuthProvider.PROVIDER_ID,
     firebase.auth.GoogleAuthProvider.PROVIDER_ID,
-    firebase.auth.FacebookAuthProvider.PROVIDER_ID,
   ],
 }
 

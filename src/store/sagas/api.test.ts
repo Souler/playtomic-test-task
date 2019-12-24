@@ -1,75 +1,101 @@
-import { all, call, delay, fork, put, take, takeLeading } from 'redux-saga/effects'
-import secretApi from '../../lib/secretApi'
-import {
-  fetchRandomStringError,
-  fetchRandomStringSuccess,
-  fetchSecretStringError,
-  fetchSecretStringSuccess,
-} from '../actions'
-import { FETCH_RANDOM_STRING_REQUEST, FETCH_SECRET_STRING_REQUEST } from '../types'
+import { runSaga } from 'redux-saga'
+import { expectSaga, testSaga } from 'redux-saga-test-plan'
+import { all, call, cancel, delay, fork, put, select, takeEvery } from 'redux-saga/effects'
+import { fetchApiResourceError, fetchApiResourceRequest, fetchApiResourceSuccess } from '../actions'
+import { getApiResource } from '../selectors'
+import { ActionTypes, FETCH_API_RESOURCE_REQUEST, FetchApiResourceRequestAction } from '../types'
 import api, {
-  fetchRandomString,
-  fetchSecretString,
-  handleRandomStringRequest,
-  handleSecretStringRequest,
+  fetchApiResource,
+  fetchApiResourceIfNotInProgress,
+  handleFetchApiResourceRequest,
 } from './api'
 
-test('forks the individual sagas and completes', async () => {
-  const gen = api()
-  expect(gen.next().value).toEqual(
-    all([fork(handleRandomStringRequest), fork(handleSecretStringRequest)]),
-  )
-  expect(gen.next().done).toEqual(true)
-})
+// test('forks the individual sagas and completes', async () => {
+//   return testSaga(api)
+//     .next()
+//     .all([fork(handleFetchApiResourceRequest)])
+// })
 
-describe('handleRandomStringRequest', () => {
-  it('setups a nested saga for handling FETCH_RANDOM_STRING_REQUEST actions', () => {
-    const gen = handleRandomStringRequest()
-    expect(gen.next().value).toEqual(takeLeading(FETCH_RANDOM_STRING_REQUEST, fetchRandomString))
-    expect(gen.next().done).toEqual(true)
-  })
-})
+describe('fetchApiResource', () => {
+  test('dispatches fetchApiResourceSuccess on success', async () => {
+    const fakeResourceId = 'resource#1'
+    const fakeRequestInfo = 'https://jsonplaceholder.typicode.com/users'
+    const fakeResource = { foo: 'bar' }
+    const fakeResponse = new Response(JSON.stringify(fakeResource))
 
-describe('handleSecretStringRequest', () => {
-  it('setups a saga for handling the first FETCH_SECRET_STRING_REQUEST', () => {
-    const gen = handleSecretStringRequest()
-    expect(gen.next().value).toEqual(take(FETCH_SECRET_STRING_REQUEST))
-    expect(gen.next().value).toEqual(call(fetchSecretString))
-    expect(gen.next().done).toEqual(true)
+    return expectSaga(fetchApiResource, fakeResourceId, fakeRequestInfo)
+      .provide([
+        [call(fetch, fakeRequestInfo), fakeResponse],
+        [call([fakeResponse, 'json']), fakeResource],
+      ])
+      .put(fetchApiResourceSuccess(fakeResourceId, fakeResource))
+      .run()
   })
-})
 
-describe('fetchSecretString', () => {
-  it('dispatches fetchSecretStringSuccess on success', () => {
-    const gen = fetchSecretString()
-    const secretString = 's3cret'
-    expect(gen.next().value).toEqual(call([secretApi, 'fetchRandomString']))
-    expect(gen.next(secretString).value).toEqual(put(fetchSecretStringSuccess(secretString)))
-    expect(gen.next().done).toEqual(true)
-  })
-  it('dispatches fetchSecretStringError on error', () => {
-    const gen = fetchSecretString()
-    const error = new Error('testing error')
-    expect(gen.next().value).toEqual(call([secretApi, 'fetchRandomString']))
-    expect(gen.throw(error).value).toEqual(put(fetchSecretStringError(error)))
-    expect(gen.next().done).toEqual(true)
+  test('dispatches fetchApiResourceError on error', () => {
+    const fakeResourceId = 'resource#1'
+    const fakeRequestInfo = 'https://jsonplaceholder.typicode.com/users'
+    const fakeError = 'Error: this is a fake error message'
+
+    return expectSaga(fetchApiResource, fakeResourceId, fakeRequestInfo)
+      .provide([[call(fetch, fakeRequestInfo), Promise.reject(fakeError)]])
+      .put(fetchApiResourceError(fakeResourceId, fakeError))
+      .run()
   })
 })
 
-describe('fetchRandomString', () => {
-  it('dispatches fetchRandomStringSuccess and sleeps for 10s on success', () => {
-    const gen = fetchRandomString()
-    const randomString = 's3cret'
-    expect(gen.next().value).toEqual(call([secretApi, 'fetchRandomString']))
-    expect(gen.next(randomString).value).toEqual(put(fetchRandomStringSuccess(randomString)))
-    expect(gen.next().value).toEqual(delay(10000))
-    expect(gen.next().done).toEqual(true)
+describe('fetchApiResourceIfNotInProgress', () => {
+  test('calls fetchApiResource if it is not already in progress', () => {
+    const fakeResourceId = 'resource#1'
+    const fakeRequestInfo = 'https://jsonplaceholder.typicode.com/users'
+    const fakeResourceState = { loading: false }
+    const fakeResourceStateSelector = () => fakeResourceState
+
+    testSaga(fetchApiResourceIfNotInProgress, fakeResourceId, fakeRequestInfo)
+      .next()
+      .call(getApiResource, fakeResourceId)
+      .next(fakeResourceStateSelector)
+      .select(fakeResourceStateSelector)
+      .next(fakeResourceState)
+      .call(fetchApiResource, fakeResourceId, fakeRequestInfo)
+      .next()
+      .isDone()
   })
-  it('dispatches fetchRandomStringError on error', () => {
-    const gen = fetchRandomString()
-    const error = new Error('testing error')
-    expect(gen.next().value).toEqual(call([secretApi, 'fetchRandomString']))
-    expect(gen.throw(error).value).toEqual(put(fetchRandomStringError(error)))
-    expect(gen.next().done).toEqual(true)
+  test('cancels if it is already in progress', () => {
+    const fakeResourceId = 'resource#1'
+    const fakeRequestInfo = 'https://jsonplaceholder.typicode.com/users'
+    const fakeResourceState = { loading: true }
+    const fakeResourceStateSelector = () => fakeResourceState
+
+    testSaga(fetchApiResourceIfNotInProgress, fakeResourceId, fakeRequestInfo)
+      .next()
+      .call(getApiResource, fakeResourceId)
+      .next(fakeResourceStateSelector)
+      .select(fakeResourceStateSelector)
+      .next(fakeResourceState)
+      .isDone()
+  })
+})
+
+describe('handleFetchApiResourceRequest', () => {
+  test('calls fetchApiResourceIfNotInProgress with the action payload', () => {
+    const fakeResourceId = 'resource#1'
+    const fakeRequestInfo = 'https://jsonplaceholder.typicode.com/users'
+    const fakeResourceRequestAction = fetchApiResourceRequest(
+      fakeResourceId,
+      fakeRequestInfo,
+    ) as FetchApiResourceRequestAction
+
+    testSaga(handleFetchApiResourceRequest, fakeResourceRequestAction)
+      .next()
+      .call(fetchApiResourceIfNotInProgress, fakeResourceId, fakeRequestInfo)
+      .next()
+      .isDone()
+  })
+})
+
+describe('api saga', () => {
+  test.skip('forks to other sagas', () => {
+    return expectSaga(api).all([takeEvery('A', handleFetchApiResourceRequest)])
   })
 })

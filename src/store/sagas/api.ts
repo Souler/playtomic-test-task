@@ -1,50 +1,40 @@
-import { all, call, delay, fork, put, take, takeLeading } from 'redux-saga/effects'
-import secretApi from '../../lib/secretApi'
+import { all, call, put, select, takeLeading } from 'redux-saga/effects'
+import { fetchApiResourceError, fetchApiResourceSuccess } from '../actions'
+import { getApiResource } from '../selectors'
 import {
-  fetchRandomStringError,
-  fetchRandomStringSuccess,
-  fetchSecretStringError,
-  fetchSecretStringSuccess,
-} from '../actions'
-import { FETCH_RANDOM_STRING_REQUEST, FETCH_SECRET_STRING_REQUEST } from '../types'
+  ApiResourceState,
+  FETCH_API_RESOURCE_REQUEST,
+  FetchApiResourceRequestAction,
+} from '../types'
 
-function* fetchSecretString() {
+/* FIXME: TypeScript swallows the typing after yields, why? */
+
+function* fetchApiResource(resourceId: string, requestInfo: RequestInfo) {
   try {
-    const secretString = yield call([secretApi, 'fetchRandomString'])
-    yield put(fetchSecretStringSuccess(secretString))
-  } catch (e) {
-    yield put(fetchSecretStringError(e))
+    const res: Response = yield call(fetch, requestInfo)
+    const data = yield call([res, 'json'])
+    yield put(fetchApiResourceSuccess(resourceId, data))
+  } catch (err) {
+    yield put(fetchApiResourceError(resourceId, err.message || err))
   }
 }
 
-function* fetchRandomString() {
-  try {
-    const randomString = yield call([secretApi, 'fetchRandomString'])
-    yield put(fetchRandomStringSuccess(randomString))
-    // "Cache" the value for 10 seconds
-    yield delay(10000)
-  } catch (e) {
-    yield put(fetchRandomStringError(e))
+function* fetchApiResourceIfNotInProgress(resourceId: string, requestInfo: RequestInfo) {
+  const resourceStateSelector = yield call(getApiResource, resourceId)
+  const resourceState: ApiResourceState | null = yield select(resourceStateSelector)
+  if (!resourceState || !resourceState.loading) {
+    yield call(fetchApiResource, resourceId, requestInfo)
   }
 }
 
-function* handleSecretStringRequest() {
-  yield take(FETCH_SECRET_STRING_REQUEST)
-  yield call(fetchSecretString)
-}
-
-function* handleRandomStringRequest() {
-  yield takeLeading(FETCH_RANDOM_STRING_REQUEST, fetchRandomString)
+function* handleFetchApiResourceRequest(action: FetchApiResourceRequestAction) {
+  const { resourceId, requestInfo } = action.payload
+  yield call(fetchApiResourceIfNotInProgress, resourceId, requestInfo)
 }
 
 function* apiSaga() {
-  yield all([fork(handleRandomStringRequest), fork(handleSecretStringRequest)])
+  yield all([takeLeading(FETCH_API_RESOURCE_REQUEST, handleFetchApiResourceRequest)])
 }
 
 export default apiSaga
-export {
-  fetchSecretString,
-  fetchRandomString,
-  handleSecretStringRequest,
-  handleRandomStringRequest,
-}
+export { fetchApiResource, fetchApiResourceIfNotInProgress, handleFetchApiResourceRequest }

@@ -4,6 +4,8 @@ import firebase from '../../lib/firebase'
 import { authReady, loginSuccess, logoutSuccess } from '../actions'
 import { LOGOUT_REQUEST, User } from '../types'
 
+/* FIXME: TypeScript swallows the typing after yields, why? */
+
 function authStateEventChannel() {
   const firebaseUserToUser = (user: firebase.User) => ({
     avatarUrl: user.photoURL!,
@@ -34,7 +36,6 @@ function* watchForAuthReady() {
 function* watchForUserLoginStatus() {
   const authState = yield call(authStateEventChannel)
   while (true) {
-    // FIXME: TypeScript swallows the typing after the yield, why?
     const { user } = yield take(authState)
     yield put(user ? loginSuccess(user) : logoutSuccess())
   }
@@ -42,7 +43,6 @@ function* watchForUserLoginStatus() {
 
 function* logoutRequestHandler() {
   while (true) {
-    // FIXME: TypeScript swallows the typing after the yield, why?
     yield take(LOGOUT_REQUEST)
     yield call([firebase.auth(), 'signOut'])
   }

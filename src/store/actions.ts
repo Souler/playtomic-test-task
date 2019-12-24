@@ -1,12 +1,9 @@
 import {
   ActionTypes,
   AUTH_READY,
-  FETCH_RANDOM_STRING_ERROR,
-  FETCH_RANDOM_STRING_REQUEST,
-  FETCH_RANDOM_STRING_SUCCESS,
-  FETCH_SECRET_STRING_ERROR,
-  FETCH_SECRET_STRING_REQUEST,
-  FETCH_SECRET_STRING_SUCCESS,
+  FETCH_API_RESOURCE_ERROR,
+  FETCH_API_RESOURCE_REQUEST,
+  FETCH_API_RESOURCE_SUCCESS,
   LOGIN_SUCCESS,
   LOGOUT_REQUEST,
   LOGOUT_SUCCESS,
@@ -38,43 +35,24 @@ function logoutSuccess(): ActionTypes {
   }
 }
 
-function fetchSecretStringRequest(): ActionTypes {
+function fetchApiResourceRequest(resourceId: string, requestInfo: RequestInfo): ActionTypes {
   return {
-    type: FETCH_SECRET_STRING_REQUEST,
+    payload: { resourceId, requestInfo },
+    type: FETCH_API_RESOURCE_REQUEST,
   }
 }
 
-function fetchSecretStringSuccess(secretString: string): ActionTypes {
+function fetchApiResourceSuccess<T>(resourceId: string, data: T): ActionTypes {
   return {
-    payload: { secretString },
-    type: FETCH_SECRET_STRING_SUCCESS,
+    payload: { resourceId, data },
+    type: FETCH_API_RESOURCE_SUCCESS,
   }
 }
 
-function fetchSecretStringError(error: Error): ActionTypes {
+function fetchApiResourceError(resourceId: string, error: string): ActionTypes {
   return {
-    payload: { error },
-    type: FETCH_SECRET_STRING_ERROR,
-  }
-}
-
-function fetchRandomStringRequest(): ActionTypes {
-  return {
-    type: FETCH_RANDOM_STRING_REQUEST,
-  }
-}
-
-function fetchRandomStringSuccess(randomString: string): ActionTypes {
-  return {
-    payload: { randomString },
-    type: FETCH_RANDOM_STRING_SUCCESS,
-  }
-}
-
-function fetchRandomStringError(error: Error): ActionTypes {
-  return {
-    payload: { error },
-    type: FETCH_RANDOM_STRING_ERROR,
+    payload: { resourceId, error },
+    type: FETCH_API_RESOURCE_ERROR,
   }
 }
 
@@ -83,10 +61,7 @@ export {
   loginSuccess,
   logoutRequest,
   logoutSuccess,
-  fetchSecretStringRequest,
-  fetchSecretStringSuccess,
-  fetchSecretStringError,
-  fetchRandomStringRequest,
-  fetchRandomStringSuccess,
-  fetchRandomStringError,
+  fetchApiResourceRequest,
+  fetchApiResourceSuccess,
+  fetchApiResourceError,
 }

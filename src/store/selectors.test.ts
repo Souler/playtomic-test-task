@@ -53,16 +53,36 @@ describe('getUserSafe', () => {
   })
 })
 
-describe('getSecretString', () => {
-  test('returns state.apiData.seretString', () => {
-    const state: DeepPartial<RootState> = { apiData: { secretString: 'foobar' } }
-    expect(selectors.getSecretString(state as RootState)).toEqual('foobar')
+describe('getApiResource', () => {
+  test('returns a function', () => {
+    expect(typeof selectors.getApiResource('resource#1')).toBe('function')
   })
-})
-
-describe('getRandomString', () => {
-  test('returns state.apiData.seretString', () => {
-    const state: DeepPartial<RootState> = { apiData: { randomString: 'bazfoo' } }
-    expect(selectors.getRandomString(state as RootState)).toEqual('bazfoo')
+  test('returns null for an unkown specified resource', () => {
+    const state: Partial<RootState> = {
+      apiData: {
+        'resource#1': {
+          data: undefined,
+          error: null,
+          loading: true,
+        },
+      },
+    }
+    expect(selectors.getApiResource('resource#2')(state as RootState)).toBe(null)
+  })
+  test('returns the resource state for the provided resourceId', () => {
+    const state: Partial<RootState> = {
+      apiData: {
+        'resource#1': {
+          data: undefined,
+          error: null,
+          loading: true,
+        },
+      },
+    }
+    expect(selectors.getApiResource('resource#1')(state as RootState)).toEqual({
+      data: undefined,
+      error: null,
+      loading: true,
+    })
   })
 })

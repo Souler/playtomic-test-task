@@ -1,24 +1,14 @@
-import React, { useEffect } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
-import { fetchSecretStringRequest } from '../store/actions'
-import { getSecretString } from '../store/selectors'
+import React from 'react'
+import useTodos from '../hooks/useTodos'
 import DashboardContent from './DashboardContent'
-
-function useSecretString() {
-  const secretString = useSelector(getSecretString)
-  const dispatch = useDispatch()
-  useEffect(() => {
-    dispatch(fetchSecretStringRequest())
-  }, [dispatch])
-  return secretString
-}
+import JSONTreeView from './JSONTreeView'
 
 function Settings() {
-  const secretString = useSecretString()
+  const [loading, todos, error] = useTodos()
 
   return (
     <DashboardContent title="Settings">
-      <code>{secretString}</code>
+      <JSONTreeView data={{ loading, error, todos }} />
     </DashboardContent>
   )
 }
