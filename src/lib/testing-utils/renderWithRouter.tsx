@@ -16,7 +16,7 @@ function defaultRenderWithRouterOptions(
   return { route, history }
 }
 
-function renderWithRouter(ui: ReactElement, options: RenderWithRouterOptions) {
+function renderWithRouter(ui: ReactElement, options: RenderWithRouterOptions = {}) {
   const { history } = defaultRenderWithRouterOptions(options)
   const Wrapper = ({ children }: PropsWithChildren<{}>) => (
     <Router history={history}>{children}</Router>

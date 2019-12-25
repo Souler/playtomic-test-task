@@ -1,5 +1,7 @@
 import React from 'react'
-import { renderWithRedux } from '../lib/testing-utils'
+import { act, fireEvent, renderWithRedux } from '../lib/testing-utils'
+import { logoutRequest } from '../store/actions'
+import configureStore from '../store/configureStore'
 import Banner from './Banner'
 
 const user = {
@@ -34,4 +36,18 @@ test('shows the authenticated user avatar', () => {
   expect(el.getAttribute('src')).toBe(user.avatarUrl)
 })
 
-test.todo('dispatches logout action when double-clicks on the user info')
+test('dispatches logout action when double-clicks on the user info', () => {
+  const store = configureStore(state)
+  jest.spyOn(store, 'dispatch')
+
+  const { getByText } = renderWithRedux(<Banner />, { store })
+
+  const el = getByText(user.role)
+  expect(el).toBeInTheDocument()
+
+  act(() => {
+    fireEvent(el, new MouseEvent('dblclick', { bubbles: true, cancelable: true }))
+  })
+
+  expect(store.dispatch).toHaveBeenCalledWith(logoutRequest())
+})

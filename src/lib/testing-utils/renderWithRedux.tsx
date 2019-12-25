@@ -18,7 +18,7 @@ function defaultRenderWithReduxOptions(
   return { state, store }
 }
 
-function renderWithRedux(ui: ReactElement, options: RenderWithReduxOptions) {
+function renderWithRedux(ui: ReactElement, options: RenderWithReduxOptions = {}) {
   const { store } = defaultRenderWithReduxOptions(options)
   const Wrapper = ({ children }: PropsWithChildren<{}>) => (
     <Provider store={store}>{children}</Provider>

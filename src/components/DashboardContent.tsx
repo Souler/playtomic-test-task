@@ -28,11 +28,7 @@ const Content = styled.div`
   padding: 24px 50px;
 `
 
-function DashboardContent(
-  props: PropsWithChildren<{
-    title: string
-  }>,
-) {
+function DashboardContent(props: PropsWithChildren<{ title: string }>) {
   return (
     <Container>
       <Card>

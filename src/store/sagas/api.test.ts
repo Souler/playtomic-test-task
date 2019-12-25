@@ -1,9 +1,8 @@
-import { runSaga } from 'redux-saga'
 import { expectSaga, testSaga } from 'redux-saga-test-plan'
-import { all, call, cancel, delay, fork, put, select, takeEvery } from 'redux-saga/effects'
+import { call } from 'redux-saga/effects'
 import { fetchApiResourceError, fetchApiResourceRequest, fetchApiResourceSuccess } from '../actions'
 import { getApiResource } from '../selectors'
-import { ActionTypes, FETCH_API_RESOURCE_REQUEST, FetchApiResourceRequestAction } from '../types'
+import { FetchApiResourceRequestAction } from '../types'
 import api, {
   fetchApiResource,
   fetchApiResourceIfNotInProgress,

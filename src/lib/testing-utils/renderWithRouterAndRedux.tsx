@@ -21,7 +21,7 @@ function defaultRenderWithRouterAndReduxOptions(
   }
 }
 
-function renderWithRouterAndRedux(ui: ReactElement, options: RenderWithRouterAndReduxOptions) {
+function renderWithRouterAndRedux(ui: ReactElement, options: RenderWithRouterAndReduxOptions = {}) {
   const { history, store } = defaultRenderWithRouterAndReduxOptions(options)
   const Wrapper = ({ children }: PropsWithChildren<{}>) => (
     <Router history={history}>
