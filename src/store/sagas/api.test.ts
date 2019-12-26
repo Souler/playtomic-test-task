@@ -47,15 +47,9 @@ describe('fetchApiResourceIfNotInProgress', () => {
   test('calls fetchApiResource if it is not already in progress', () => {
     const fakeResourceId = 'resource#1'
     const fakeRequestInfo = 'https://jsonplaceholder.typicode.com/users'
-    const fakeResourceState = { loading: false }
-    const fakeResourceStateSelector = () => fakeResourceState
 
     testSaga(fetchApiResourceIfNotInProgress, fakeResourceId, fakeRequestInfo)
       .next()
-      .call(getApiResource, fakeResourceId)
-      .next(fakeResourceStateSelector)
-      .select(fakeResourceStateSelector)
-      .next(fakeResourceState)
       .call(fetchApiResource, fakeResourceId, fakeRequestInfo)
       .next()
       .isDone()
@@ -63,15 +57,14 @@ describe('fetchApiResourceIfNotInProgress', () => {
   test('cancels if it is already in progress', () => {
     const fakeResourceId = 'resource#1'
     const fakeRequestInfo = 'https://jsonplaceholder.typicode.com/users'
-    const fakeResourceState = { loading: true }
-    const fakeResourceStateSelector = () => fakeResourceState
+    const fakeRequestProgressMap: Map<string, boolean> = new Map([[fakeResourceId, true]])
 
-    testSaga(fetchApiResourceIfNotInProgress, fakeResourceId, fakeRequestInfo)
+    testSaga(fetchApiResourceIfNotInProgress, fakeResourceId, fakeRequestInfo, {
+      resourceInProgressById: fakeRequestProgressMap,
+    })
       .next()
-      .call(getApiResource, fakeResourceId)
-      .next(fakeResourceStateSelector)
-      .select(fakeResourceStateSelector)
-      .next(fakeResourceState)
+      .call(fetchApiResource, fakeResourceId, fakeRequestInfo)
+      .next()
       .isDone()
   })
 })
