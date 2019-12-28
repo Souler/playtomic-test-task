@@ -9,12 +9,6 @@ import api, {
   handleFetchApiResourceRequest,
 } from './api'
 
-// test('forks the individual sagas and completes', async () => {
-//   return testSaga(api)
-//     .next()
-//     .all([fork(handleFetchApiResourceRequest)])
-// })
-
 describe('fetchApiResource', () => {
   test('dispatches fetchApiResourceSuccess on success', async () => {
     const fakeResourceId = 'resource#1'
@@ -44,7 +38,7 @@ describe('fetchApiResource', () => {
 })
 
 describe('fetchApiResourceIfNotInProgress', () => {
-  test('calls fetchApiResource if it is not already in progress', () => {
+  test('calls fetchApiResource if resource is not already in progress', () => {
     const fakeResourceId = 'resource#1'
     const fakeRequestInfo = 'https://jsonplaceholder.typicode.com/users'
 
@@ -54,7 +48,7 @@ describe('fetchApiResourceIfNotInProgress', () => {
       .next()
       .isDone()
   })
-  test('cancels if it is already in progress', () => {
+  test('does nothing if resource is already in progress', () => {
     const fakeResourceId = 'resource#1'
     const fakeRequestInfo = 'https://jsonplaceholder.typicode.com/users'
     const fakeRequestProgressMap: Map<string, boolean> = new Map([[fakeResourceId, true]])
@@ -62,8 +56,6 @@ describe('fetchApiResourceIfNotInProgress', () => {
     testSaga(fetchApiResourceIfNotInProgress, fakeResourceId, fakeRequestInfo, {
       resourceInProgressById: fakeRequestProgressMap,
     })
-      .next()
-      .call(fetchApiResource, fakeResourceId, fakeRequestInfo)
       .next()
       .isDone()
   })
